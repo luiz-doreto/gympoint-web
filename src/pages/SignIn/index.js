@@ -32,7 +32,7 @@ export default function SignIn() {
                 <Input id="pass" name="password" type="password" />
 
                 <button type="submit">
-                    {loading ? 'Carregando...' : 'Acessar'}
+                    {loading ? 'Carregando...' : 'Entrar no sistema'}
                 </button>
             </Form>
         </Container>

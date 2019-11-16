@@ -18,7 +18,7 @@ export function* signIn({ payload }) {
 
         yield put(signInSuccess(response.data));
 
-        history.push('/student');
+        history.push('/student/list');
     } catch (err) {
         toast.error('Falha na autenticação, por favor verifique seus dados.');
         yield put(signInFailure());
@@ -31,7 +31,12 @@ export function setToken({ payload }) {
     api.defaults.headers.Authorization = `Bearer ${token}`;
 }
 
+export function signOut() {
+    history.push('/');
+}
+
 export default all([
     takeLatest('@auth/SIGN_IN_REQUEST', signIn),
+    takeLatest('@auth/SIGN_OUT', signOut),
     takeLatest('persist/REHYDRATE', setToken),
 ]);
