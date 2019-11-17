@@ -1,13 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import Action from './Action';
 import { Container } from './styles';
 
-export default function ContentWrapper({ children }) {
+function Table({ children }) {
     return <Container>{children}</Container>;
 }
 
-ContentWrapper.propTypes = {
+Table.propTypes = {
     children: PropTypes.oneOfType([PropTypes.element, PropTypes.array])
         .isRequired,
 };
+
+Table.Action = Action;
+
+export default Table;

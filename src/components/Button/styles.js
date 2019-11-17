@@ -17,7 +17,7 @@ function backgroundColor(buttonType) {
 export const Container = styled.button`
     border: 0;
     height: 36px;
-    padding: 10px;
+    padding: 10px 15px;
     border-radius: 4px;
     background: ${props => backgroundColor(props.buttonType)};
 

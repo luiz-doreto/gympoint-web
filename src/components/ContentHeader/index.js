@@ -14,7 +14,7 @@ export default function ContentHeader({ title, children }) {
 
 ContentHeader.propTypes = {
     title: PropTypes.string.isRequired,
-    children: PropTypes.element,
+    children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
 };
 
 ContentHeader.defaultProps = {

@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import ContentWrapper from '~/components/ContentWrapper';
-import ContentHeader from '~/components/ContentHeader';
-import Button from '~/components/Button';
-import { Container, EditButton, DeleteButton } from './styles';
+import { ContentWrapper, ContentHeader, Button, Table } from '~/components';
 import api from '~/services/api';
 
 export default function List() {
@@ -20,7 +17,7 @@ export default function List() {
     }, []);
 
     return (
-        <Container>
+        <div>
             <ContentHeader title="Gerenciando alunos">
                 <Button
                     text="Cadastrar"
@@ -30,7 +27,7 @@ export default function List() {
                 <input placeholder="Buscar aluno" />
             </ContentHeader>
             <ContentWrapper>
-                <table>
+                <Table>
                     <thead>
                         <tr>
                             <th>Nome</th>
@@ -41,33 +38,31 @@ export default function List() {
                     </thead>
                     <tbody>
                         {students.map(student => (
-                            <tr>
+                            <tr key={student.id}>
                                 <td>{student.name}</td>
                                 <td>{student.email}</td>
                                 <td>{student.age}</td>
                                 <td>
-                                    <EditButton
-                                        type="button"
+                                    <Table.Action
+                                        text="editar"
+                                        color="#4D85EE"
                                         onClick={() =>
                                             alert('not implemented yet!')
                                         }
-                                    >
-                                        editar
-                                    </EditButton>
-                                    <DeleteButton
-                                        type="button"
+                                    />
+                                    <Table.Action
+                                        text="apagar"
+                                        color="#DE3B3B"
                                         onClick={() =>
                                             alert('not implemented yet!')
                                         }
-                                    >
-                                        apagar
-                                    </DeleteButton>
+                                    />
                                 </td>
                             </tr>
                         ))}
                     </tbody>
-                </table>
+                </Table>
             </ContentWrapper>
-        </Container>
+        </div>
     );
 }

@@ -8,8 +8,9 @@ import StudentList from '~/pages/Student/List';
 import StudentForm from '~/pages/Student/Form';
 import PlanList from '~/pages/Plan/List';
 import PlanForm from '~/pages/Plan/Form';
-import Register from '~/pages/Register';
-import HelpOrder from '~/pages/HelpOrder';
+import RegisterList from '~/pages/Register/List';
+import RegisterForm from '~/pages/Register/Form';
+import HelpOrderList from '~/pages/HelpOrder/List';
 
 export default function Routes() {
     return (
@@ -20,8 +21,13 @@ export default function Routes() {
             <Route path="/student/form" component={StudentForm} isPrivate />
             <Route path="/plan/list" component={PlanList} isPrivate />
             <Route path="/plan/form" component={PlanForm} isPrivate />
-            <Route path="/register" component={Register} isPrivate />
-            <Route path="/help-order" component={HelpOrder} isPrivate />
+            <Route path="/register/list" component={RegisterList} isPrivate />
+            <Route path="/register/form" component={RegisterForm} isPrivate />
+            <Route
+                path="/help-order/list"
+                component={HelpOrderList}
+                isPrivate
+            />
         </Switch>
     );
 }
