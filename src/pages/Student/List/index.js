@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 
 import { ContentWrapper, ContentHeader, Button, Table } from '~/components';
 import api from '~/services/api';
+import history from '~/services/history';
+
+import { Container } from './styles';
 
 export default function List() {
     const [students, setStudents] = useState([]);
@@ -17,12 +20,12 @@ export default function List() {
     }, []);
 
     return (
-        <div>
+        <Container>
             <ContentHeader title="Gerenciando alunos">
                 <Button
                     text="Cadastrar"
                     buttonType={Button.TYPES.Register}
-                    onClick={() => alert('falta implemenetar')}
+                    onClick={() => history.push('/student/form')}
                 />
                 <input placeholder="Buscar aluno" />
             </ContentHeader>
@@ -30,7 +33,7 @@ export default function List() {
                 <Table>
                     <thead>
                         <tr>
-                            <th>Nome</th>
+                            <th width="50%">Nome</th>
                             <th>Email</th>
                             <th>Idade</th>
                             <th />
@@ -47,7 +50,9 @@ export default function List() {
                                         text="editar"
                                         color="#4D85EE"
                                         onClick={() =>
-                                            alert('not implemented yet!')
+                                            history.push(
+                                                `/student/form/${student.id}`
+                                            )
                                         }
                                     />
                                     <Table.Action
@@ -63,6 +68,6 @@ export default function List() {
                     </tbody>
                 </Table>
             </ContentWrapper>
-        </div>
+        </Container>
     );
 }

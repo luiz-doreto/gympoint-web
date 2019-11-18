@@ -9,18 +9,6 @@ export const Container = styled.div`
         font-size: 24px;
     }
 
-    > button {
-        color: #fff;
-        font-weight: bold;
-        font-size: 14px;
-        text-transform: uppercase;
-        height: 36px;
-        border-radius: 4px;
-        border: 0;
-        background: #ee4d64;
-        padding: 10px;
-    }
-
     > div {
         display: flex;
         align-items: center;

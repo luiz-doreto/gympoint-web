@@ -18,7 +18,11 @@ export default function Routes() {
             <Route path="/" exact component={SignIn} />
 
             <Route path="/student/list" component={StudentList} isPrivate />
-            <Route path="/student/form" component={StudentForm} isPrivate />
+            <Route
+                path={['/student/form/:student_id', '/student/form']}
+                component={StudentForm}
+                isPrivate
+            />
             <Route path="/plan/list" component={PlanList} isPrivate />
             <Route path="/plan/form" component={PlanForm} isPrivate />
             <Route path="/register/list" component={RegisterList} isPrivate />

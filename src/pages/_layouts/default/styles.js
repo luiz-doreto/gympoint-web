@@ -9,5 +9,6 @@ export const Content = styled.div`
     margin: 50px auto;
     max-width: 1300px;
     display: flex;
+    align-items: center;
     flex-direction: column;
 `;
