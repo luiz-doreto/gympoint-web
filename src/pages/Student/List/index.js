@@ -33,7 +33,7 @@ export default function List() {
                 <Table>
                     <thead>
                         <tr>
-                            <th width="50%">Nome</th>
+                            <th width="40%">Nome</th>
                             <th>Email</th>
                             <th>Idade</th>
                             <th />

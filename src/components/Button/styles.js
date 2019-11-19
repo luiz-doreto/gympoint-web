@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { darken } from 'polished';
 import ButtonTypes from './constants';
 
 function backgroundColor(buttonType) {
@@ -17,9 +18,13 @@ function backgroundColor(buttonType) {
 export const Container = styled.button`
     border: 0;
     height: 36px;
-    padding: 10px 15px;
+    padding: 0 10px;
     border-radius: 4px;
     background: ${props => backgroundColor(props.buttonType)};
+    transition: background 0.2s;
+    &:hover {
+        background: ${props => darken(0.08, backgroundColor(props.buttonType))};
+    }
 
     div {
         display: flex;

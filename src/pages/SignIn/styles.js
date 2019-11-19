@@ -14,25 +14,13 @@ export const Container = styled.div`
         flex-direction: column;
         margin-top: 30px;
 
-        label {
-            align-self: flex-start;
-            text-transform: uppercase;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        input {
-            background: #fff;
-            border: 1px solid rgba(0, 0, 0, 0.2);
-            height: 44px;
-            border-radius: 4px;
-            padding: 0 15px;
-            margin: 0 0 10px;
-        }
-
         span {
             color: #fb6f91;
             align-self: flex-start;
+            margin: 0 0 10px;
+        }
+
+        input {
             margin: 0 0 10px;
         }
 

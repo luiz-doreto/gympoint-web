@@ -4,6 +4,8 @@ import { ContentWrapper, ContentHeader, Button, Table } from '~/components';
 import { formatPrice } from '~/util/format';
 import api from '~/services/api';
 
+import { Container } from './styles';
+
 export default function List() {
     const [plans, setPlans] = useState([]);
 
@@ -27,7 +29,7 @@ export default function List() {
     }, []);
 
     return (
-        <div>
+        <Container>
             <ContentHeader title="Gerenciando planos">
                 <Button
                     text="Cadastrar"
@@ -39,7 +41,7 @@ export default function List() {
                 <Table>
                     <thead>
                         <tr>
-                            <th>Título</th>
+                            <th width="40%">Título</th>
                             <th>Duração</th>
                             <th>Valor</th>
                             <th />
@@ -72,6 +74,6 @@ export default function List() {
                     </tbody>
                 </Table>
             </ContentWrapper>
-        </div>
+        </Container>
     );
 }

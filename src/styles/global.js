@@ -31,4 +31,19 @@ export default createGlobalStyle`
     button {
         cursor: pointer;
     }
+
+    label {
+        align-self: flex-start;
+        text-transform: uppercase;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    input {
+        background: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        height: 44px;
+        border-radius: 4px;
+        padding: 0 15px;
+    }
 `;

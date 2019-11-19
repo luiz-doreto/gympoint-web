@@ -12,6 +12,10 @@ export const Container = styled.div`
     > div {
         display: flex;
         align-items: center;
+
+        > button {
+            margin-left: 10px;
+        }
     }
 
     div input {

@@ -5,7 +5,7 @@ import { MdAdd, MdDone, MdChevronLeft } from 'react-icons/md';
 import { Container } from './styles';
 import ButtonTypes from './constants';
 
-function Button({ onClick, text, buttonType }) {
+function Button({ form, type, onClick, text, buttonType }) {
     function renderIcon() {
         switch (buttonType) {
             case ButtonTypes.Register:
@@ -20,7 +20,12 @@ function Button({ onClick, text, buttonType }) {
     }
 
     return (
-        <Container type="button" onClick={onClick} buttonType={buttonType}>
+        <Container
+            form={form}
+            type={type}
+            onClick={onClick}
+            buttonType={buttonType}
+        >
             <div>
                 {buttonType && <div>{renderIcon()}</div>}
                 <strong>{text}</strong>
@@ -30,13 +35,18 @@ function Button({ onClick, text, buttonType }) {
 }
 
 Button.propTypes = {
-    onClick: PropTypes.func.isRequired,
+    onClick: PropTypes.func,
     text: PropTypes.string.isRequired,
+    type: PropTypes.string,
     buttonType: PropTypes.string,
+    form: PropTypes.string,
 };
 
 Button.defaultProps = {
+    onClick: undefined,
+    type: 'button',
     buttonType: null,
+    form: null,
 };
 
 Button.TYPES = ButtonTypes;
