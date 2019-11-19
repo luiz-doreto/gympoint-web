@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { ContentWrapper, ContentHeader, Button, Table } from '~/components';
 import { formatPrice } from '~/util/format';
 import api from '~/services/api';
+import history from '~/services/history';
 
 import { Container } from './styles';
 
@@ -34,7 +35,7 @@ export default function List() {
                 <Button
                     text="Cadastrar"
                     buttonType={Button.TYPES.Register}
-                    onClick={() => alert('tem que fazer')}
+                    onClick={() => history.push('/plan/form')}
                 />
             </ContentHeader>
             <ContentWrapper>
@@ -43,7 +44,7 @@ export default function List() {
                         <tr>
                             <th width="40%">Título</th>
                             <th>Duração</th>
-                            <th>Valor</th>
+                            <th>Valor/mês</th>
                             <th />
                         </tr>
                     </thead>
@@ -58,7 +59,9 @@ export default function List() {
                                         text="editar"
                                         color="#4D85EE"
                                         onClick={() =>
-                                            alert('not implemented yet!')
+                                            history.push(
+                                                `/plan/form/${plan.id}`
+                                            )
                                         }
                                     />
                                     <Table.Action

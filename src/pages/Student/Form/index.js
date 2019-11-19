@@ -14,9 +14,9 @@ const schema = Yup.object().shape({
     email: Yup.string()
         .email('E-mail inválido')
         .required('Campo obrigatório'),
-    age: Yup.string().required('Campo obrigatório'),
-    weight: Yup.string().required('Campo obrigatório'),
-    height: Yup.string().required('Campo obrigatório'),
+    age: Yup.number().required('Campo obrigatório'),
+    weight: Yup.number().required('Campo obrigatório'),
+    height: Yup.number().required('Campo obrigatório'),
 });
 
 export default function Form() {
