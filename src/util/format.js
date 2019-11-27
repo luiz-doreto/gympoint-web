@@ -13,3 +13,11 @@ export function formatDate(date) {
         { locale: pt }
     );
 }
+
+export function formatDateSimple(date) {
+    return format(
+        date,
+        'dd/MM/yyyy', // 22/01/2019
+        { locale: pt }
+    );
+}

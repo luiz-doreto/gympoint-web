@@ -3,7 +3,9 @@ import { MdCheckCircle } from 'react-icons/md';
 
 import { ContentWrapper, ContentHeader, Button, Table } from '~/components';
 import api from '~/services/api';
+import history from '~/services/history';
 import { formatDate } from '~/util/format';
+import { Container } from './styles';
 
 export default function List() {
     const [registers, setRegisters] = useState([]);
@@ -25,20 +27,20 @@ export default function List() {
     }, []);
 
     return (
-        <div>
+        <Container>
             <ContentHeader title="Gerenciando matrículas">
                 <Button
                     text="Cadastrar"
                     buttonType={Button.TYPES.Register}
-                    onClick={() => alert('tem que fazer')}
+                    onClick={() => history.push('/register/form')}
                 />
             </ContentHeader>
             <ContentWrapper>
                 <Table>
                     <thead>
                         <tr>
-                            <th>Aluno</th>
-                            <th>Plano</th>
+                            <th width="25%">Aluno</th>
+                            <th width="15%">Plano</th>
                             <th>Inicio</th>
                             <th>Término</th>
                             <th>Ativa</th>
@@ -67,7 +69,9 @@ export default function List() {
                                         text="editar"
                                         color="#4D85EE"
                                         onClick={() =>
-                                            alert('not implemented yet!')
+                                            history.push(
+                                                `/register/form/${reg.id}`
+                                            )
                                         }
                                     />
                                     <Table.Action
@@ -83,6 +87,6 @@ export default function List() {
                     </tbody>
                 </Table>
             </ContentWrapper>
-        </div>
+        </Container>
     );
 }
