@@ -6,6 +6,7 @@ import Table from './Table';
 import InputSuggest from './InputSuggest';
 import Select from './Select';
 import DatePicker from './DatePicker';
+import Dialog from './Dialog';
 
 export {
     ContentHeader,
@@ -16,4 +17,5 @@ export {
     InputSuggest,
     Select,
     DatePicker,
+    Dialog,
 };

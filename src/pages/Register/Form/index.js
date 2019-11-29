@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { parseISO } from 'date-fns';
-import { Form as UnForm, Input } from '@rocketseat/unform';
+import { parseISO, addMonths } from 'date-fns';
+import { toast } from 'react-toastify';
+import { Form as UnForm } from '@rocketseat/unform';
+import * as Yup from 'yup';
 
 import {
     ContentHeader,
@@ -11,15 +13,29 @@ import {
     DatePicker,
 } from '~/components';
 import { Container, InputGridContainer, InputContainer } from './styles';
-import { formatPrice } from '~/util/format';
+import { formatPrice, formatDateSimple } from '~/util/format';
 import history from '~/services/history';
 import api from '~/services/api';
 
+const schema = Yup.object().shape({
+    student_id: Yup.number()
+        .typeError('Campo obrigatório')
+        .required('Campo obrigatório'),
+    plan_id: Yup.number()
+        .typeError('Campo obrigatório')
+        .required('Campo obrigatório'),
+    start_date: Yup.date()
+        .typeError('Formato inválido')
+        .required('Campo obrigatório'),
+});
+
 export default function Form() {
     const { register_id } = useParams();
-    const [register, setRegister] = useState({});
-    const [students, setStudents] = useState([]);
-    const [plans, setPlans] = useState([]);
+    const [register, setRegister] = useState(null);
+    const [students, setStudents] = useState(null);
+    const [plans, setPlans] = useState(null);
+    const [endDate, setEndDate] = useState('');
+    const [totalValue, setTotalValue] = useState(formatPrice(0));
 
     useEffect(() => {
         async function loadStudents() {
@@ -36,9 +52,10 @@ export default function Form() {
         async function loadPlans() {
             const response = await api.get('plans');
 
-            const data = response.data.map(plan => ({
-                id: plan.id,
-                title: plan.title,
+            const data = response.data.map(p => ({
+                ...p,
+                id: p.id,
+                title: p.title,
             }));
 
             setPlans(data);
@@ -57,17 +74,52 @@ export default function Form() {
                 setRegister({
                     ...data,
                     start_date: parseISO(data.start_date),
-                    end_date: parseISO(data.end_date),
+                    end_date: formatDateSimple(parseISO(data.end_date)),
                     price: formatPrice(data.price),
                 });
+            } else {
+                setRegister({});
             }
         }
 
         loadRegister();
     }, [register_id]);
 
+    useEffect(() => {
+        if (register && plans) {
+            const { start_date, plan_id } = register;
+            const plan = plans.find(p => p.id === plan_id);
+
+            if (plan) {
+                setTotalValue(formatPrice(plan.total_price));
+
+                if (start_date) {
+                    setEndDate(
+                        formatDateSimple(addMonths(start_date, plan.duration))
+                    );
+                }
+            }
+        }
+    }, [register, plans]); //eslint-disable-line
+
+    function handleChange(field, value) {
+        setRegister({ ...register, [field]: value });
+    }
+
     async function handleSave(data) {
-        console.tron.log(data);
+        try {
+            if (register_id) {
+                await api.put(`registrations/${register_id}`, data);
+                toast.success('Matrícula atualizada com sucesso!');
+            } else {
+                await api.post('registrations', data);
+                toast.success('Matrícula realizada com sucesso!');
+            }
+        } catch (error) {
+            toast.error('Falha ao matricular aluno');
+        }
+
+        history.push('/register/list');
     }
 
     return (
@@ -93,36 +145,56 @@ export default function Form() {
             </ContentHeader>
 
             <ContentWrapper>
-                <UnForm
-                    id="register"
-                    initialData={register}
-                    onSubmit={handleSave}
-                >
-                    <label htmlFor="student">Aluno</label>
-                    <Select id="student" name="student_id" options={students} />
-                    <InputGridContainer>
-                        <InputContainer>
-                            <label htmlFor="plan">Plano</label>
-                            <Select id="plan" name="plan_id" options={plans} />
-                        </InputContainer>
-                        <InputContainer>
-                            <label htmlFor="start_date">Data de início</label>
-                            <DatePicker id="start_date" name="start_date" />
-                        </InputContainer>
-                        <InputContainer>
-                            <label htmlFor="end_date">Data de término</label>
-                            <DatePicker
-                                id="end_date"
-                                name="end_date"
-                                disabled
-                            />
-                        </InputContainer>
-                        <InputContainer>
-                            <label htmlFor="price">Valor Total</label>
-                            <Input id="price" name="price" disabled />
-                        </InputContainer>
-                    </InputGridContainer>
-                </UnForm>
+                {register && students && plans && (
+                    <UnForm
+                        id="register"
+                        schema={schema}
+                        initialData={register}
+                        onSubmit={handleSave}
+                    >
+                        <label htmlFor="student">Aluno</label>
+                        <Select
+                            id="student"
+                            name="student_id"
+                            options={students}
+                        />
+                        <InputGridContainer>
+                            <InputContainer>
+                                <label htmlFor="plan">Plano</label>
+                                <Select
+                                    id="plan"
+                                    name="plan_id"
+                                    options={plans}
+                                    onChange={p =>
+                                        handleChange('plan_id', p.id)
+                                    }
+                                />
+                            </InputContainer>
+                            <InputContainer>
+                                <label htmlFor="start_date">
+                                    Data de início
+                                </label>
+                                <DatePicker
+                                    id="start_date"
+                                    name="start_date"
+                                    onChange={date =>
+                                        handleChange('start_date', date)
+                                    }
+                                />
+                            </InputContainer>
+                            <InputContainer>
+                                <label htmlFor="end_date">
+                                    Data de término
+                                </label>
+                                <input id="end_date" value={endDate} disabled />
+                            </InputContainer>
+                            <InputContainer>
+                                <label htmlFor="price">Valor Total</label>
+                                <input id="price" value={totalValue} disabled />
+                            </InputContainer>
+                        </InputGridContainer>
+                    </UnForm>
+                )}
             </ContentWrapper>
         </Container>
     );

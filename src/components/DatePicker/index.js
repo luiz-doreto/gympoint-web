@@ -6,7 +6,7 @@ import { ReactDatePicker } from './styles';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
-export default function DatePicker({ name, disabled }) {
+export default function DatePicker({ name, onChange, disabled }) {
     const ref = useRef(null);
     const { fieldName, registerField, defaultValue, error } = useField(name);
     const [selected, setSelected] = useState(defaultValue);
@@ -22,12 +22,18 @@ export default function DatePicker({ name, disabled }) {
         });
   }, [ref.current, fieldName]); // eslint-disable-line
 
+    function handleChange(date) {
+        onChange(date);
+        setSelected(date);
+    }
+
     return (
         <>
             <ReactDatePicker
                 name={fieldName}
+                autoComplete="off"
                 selected={selected}
-                onChange={date => setSelected(date)}
+                onChange={handleChange}
                 dateFormat="dd/MM/yyyy"
                 ref={ref}
                 disabled={disabled}

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
-import { ContentWrapper, ContentHeader, Button, Table } from '~/components';
+import { ContentWrapper, ContentHeader, Table } from '~/components';
+import AnswerDialog from '../AnswerDialog';
+import { Container } from './styles';
 import api from '~/services/api';
 
 export default function List() {
@@ -17,14 +19,8 @@ export default function List() {
     }, []);
 
     return (
-        <div>
-            <ContentHeader title="Pedidos de auxílio">
-                <Button
-                    text="Cadastrar"
-                    buttonType={Button.TYPES.Register}
-                    onClick={() => alert('tem que fazer')}
-                />
-            </ContentHeader>
+        <Container>
+            <ContentHeader title="Pedidos de auxílio" />
             <ContentWrapper>
                 <Table>
                     <thead>
@@ -51,6 +47,7 @@ export default function List() {
                     </tbody>
                 </Table>
             </ContentWrapper>
-        </div>
+            <AnswerDialog />
+        </Container>
     );
 }

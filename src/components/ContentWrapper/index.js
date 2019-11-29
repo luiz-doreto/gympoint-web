@@ -8,6 +8,9 @@ export default function ContentWrapper({ children }) {
 }
 
 ContentWrapper.propTypes = {
-    children: PropTypes.oneOfType([PropTypes.element, PropTypes.array])
-        .isRequired,
+    children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
+};
+
+ContentWrapper.defaultProps = {
+    children: null,
 };

@@ -11,7 +11,7 @@ function backgroundColor(buttonType) {
         case ButtonTypes.Back:
             return '#ddd';
         default:
-            return '#ddd';
+            return '#ee4d64';
     }
 }
 
