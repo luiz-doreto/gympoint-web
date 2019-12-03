@@ -1,25 +1,61 @@
-import React from 'react';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import { MdClose } from 'react-icons/md';
 
 import { Dialog, Button } from '~/components';
+import { Container, Header } from './styles';
 
-// import { Container } from './styles';
+export default function AnswerDialog({ visible, data, onClose, onAnswer }) {
+    const [answer, setAnswer] = useState('');
+    const [error, setError] = useState('');
 
-export default function AnswerDialog({ visible }) {
+    function handleAnswer() {
+        if (!answer) {
+            setError('Campo obrigatório');
+            return;
+        }
+
+        if (onAnswer) {
+            onAnswer.call(null, answer);
+        }
+    }
+
+    function handleClose() {
+        setError('');
+        setAnswer('');
+
+        if (onClose) {
+            onClose.call(null);
+        }
+    }
+
     return (
         <Dialog visible={visible}>
-            <h2>Pergunta do aluno</h2>
-            <span>
-                É importante questionar o quanto o julgamento imparcial das
-                eventualidades obstaculiza a apreciação da importância do fluxo
-                de informações. A certificação de metodologias que nos auxiliam
-                a lidar com a consulta aos diversos militantes acarreta um
-                processo de reformulação e modernização das diretrizes de
-                desenvolvimento para o futuro. Ainda assim, existem dúvidas a
-                respeito de como a revolução dos costumes faz parte de um
-                processo de gerenciamento do orçamento setorial.
-            </span>
-            <textarea />
-            <Button text="Responder aluno" />
+            <Container>
+                <Header>
+                    <h3>PERGUNTA DO ALUNO</h3>
+                    <button type="button" onClick={handleClose}>
+                        <MdClose size={25} color="#999" />
+                    </button>
+                </Header>
+                <p>{data.question}</p>
+                <h3>SUA RESPOSTA</h3>
+                <textarea
+                    value={answer}
+                    onChange={e => setAnswer(e.target.value)}
+                />
+                {error && <span>{error}</span>}
+                <Button text="Responder aluno" onClick={handleAnswer} />
+            </Container>
         </Dialog>
     );
 }
+
+AnswerDialog.propTypes = {
+    visible: PropTypes.bool.isRequired,
+    data: PropTypes.shape({
+        question: PropTypes.string,
+    }).isRequired,
+    onClose: PropTypes.func.isRequired,
+    onAnswer: PropTypes.func.isRequired,
+};

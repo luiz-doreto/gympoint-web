@@ -7,6 +7,8 @@ import InputSuggest from './InputSuggest';
 import Select from './Select';
 import DatePicker from './DatePicker';
 import Dialog from './Dialog';
+import EmptyState from './EmptyState';
+import Spinner from './Spinner';
 
 export {
     ContentHeader,
@@ -18,4 +20,6 @@ export {
     Select,
     DatePicker,
     Dialog,
+    EmptyState,
+    Spinner,
 };

@@ -3,16 +3,41 @@ import PropTypes from 'prop-types';
 
 import { Container } from './styles';
 
-export default function Action({ onClick, text, color }) {
+const ActionType = {
+    edit: 'editar',
+    delete: 'apagar',
+    answer: 'responder',
+};
+
+export default function Action({ onClick, type, color }) {
+    function handleClick() {
+        let res = false;
+        if (onClick) {
+            switch (type) {
+                case ActionType.delete:
+                    res = confirm('ctz?'); //eslint-disable-line
+                    if (res) {
+                        onClick.call(null);
+                    }
+                    break;
+                default:
+                    onClick.call(null);
+                    break;
+            }
+        }
+    }
+
     return (
-        <Container type="button" onClick={onClick} color={color}>
-            {text}
+        <Container type="button" onClick={handleClick} color={color}>
+            {type}
         </Container>
     );
 }
 
 Action.propTypes = {
     onClick: PropTypes.func.isRequired,
-    text: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
     color: PropTypes.string.isRequired,
 };
+
+Action.ActionType = ActionType;
