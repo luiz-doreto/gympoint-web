@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 import {
     ContentWrapper,
@@ -22,23 +23,39 @@ export default function List() {
 
     useEffect(() => {
         async function loadPlans() {
-            const response = await api.get('plans');
-
-            const data = response.data.map(plan => ({
-                ...plan,
-                formattedDuration:
-                    plan.duration === 1
-                        ? `${plan.duration} mês`
-                        : `${plan.duration} meses`,
-                formattedPrice: formatPrice(plan.price),
-            }));
-
-            setPlans(data);
-            setLoading(false);
+            await fetchPlans();
         }
 
         loadPlans();
     }, []);
+
+    async function fetchPlans() {
+        const response = await api.get('plans');
+
+        const data = response.data.map(plan => ({
+            ...plan,
+            formattedDuration:
+                plan.duration === 1
+                    ? `${plan.duration} mês`
+                    : `${plan.duration} meses`,
+            formattedPrice: formatPrice(plan.price),
+        }));
+
+        setPlans(data);
+        setLoading(false);
+    }
+
+    async function handleRemove(id) {
+        setLoading(true);
+        try {
+            await api.delete(`/plans/${id}`);
+            toast.success('Plano removido com sucesso');
+        } catch (error) {
+            toast.error('Falha ao remover plano');
+        }
+
+        await fetchPlans();
+    }
 
     return (
         <Container>
@@ -82,7 +99,7 @@ export default function List() {
                                             type={ActionType.delete}
                                             color="#DE3B3B"
                                             onClick={() =>
-                                                alert('not implemented yet!')
+                                                handleRemove(plan.id)
                                             }
                                         />
                                     </td>

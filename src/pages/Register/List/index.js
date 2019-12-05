@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { MdCheckCircle } from 'react-icons/md';
+import { toast } from 'react-toastify';
 
 import {
     ContentWrapper,
@@ -22,20 +23,36 @@ export default function List() {
 
     useEffect(() => {
         async function loadRegisters() {
-            const response = await api.get('registrations');
-
-            const data = response.data.map(register => ({
-                ...register,
-                formattedStart: formatDate(register.start_date),
-                formattedEnd: formatDate(register.end_date),
-            }));
-
-            setRegisters(data);
-            setLoading(false);
+            await fetchRegistrations();
         }
 
         loadRegisters();
     }, []);
+
+    async function fetchRegistrations() {
+        const response = await api.get('registrations');
+
+        const data = response.data.map(register => ({
+            ...register,
+            formattedStart: formatDate(register.start_date),
+            formattedEnd: formatDate(register.end_date),
+        }));
+
+        setRegisters(data);
+        setLoading(false);
+    }
+
+    async function handleRemove(id) {
+        setLoading(true);
+        try {
+            await api.delete(`/registrations/${id}`);
+            toast.success('Matrícula removida com sucesso');
+        } catch (error) {
+            toast.error('Falha ao remover matrícula');
+        }
+
+        await fetchRegistrations();
+    }
 
     return (
         <Container>
@@ -65,7 +82,7 @@ export default function List() {
                             {registers.map(reg => (
                                 <tr key={reg.id}>
                                     <td>{reg.student.name}</td>
-                                    <td>{reg.plan.title}</td>
+                                    <td>{reg.plan ? reg.plan.title : '---'}</td>
                                     <td>{reg.formattedStart}</td>
                                     <td>{reg.formattedEnd}</td>
                                     <td>
@@ -89,9 +106,7 @@ export default function List() {
                                         <Table.Action
                                             type={ActionType.delete}
                                             color="#DE3B3B"
-                                            onClick={() =>
-                                                alert('not implemented yet!')
-                                            }
+                                            onClick={() => handleRemove(reg.id)}
                                         />
                                     </td>
                                 </tr>

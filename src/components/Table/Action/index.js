@@ -15,7 +15,7 @@ export default function Action({ onClick, type, color }) {
         if (onClick) {
             switch (type) {
                 case ActionType.delete:
-                    res = confirm('ctz?'); //eslint-disable-line
+                    res = confirm('Tem certeza que deseja excluir esse registro?'); //eslint-disable-line
                     if (res) {
                         onClick.call(null);
                     }

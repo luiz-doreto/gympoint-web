@@ -35,7 +35,8 @@ module.exports = {
       "react/jsx-props-no-spreading": "off",
       "jsx-a11y/label-has-associated-control": "off",
       "jsx-a11y/control-has-associated-label": "off",
-      "no-nested-ternary": "off"
+      "no-nested-ternary": "off",
+      "no-use-before-define": "off"
     },
     settings: {
       "import/resolver": {

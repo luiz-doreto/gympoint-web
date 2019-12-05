@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 import {
     ContentWrapper,
@@ -16,6 +17,7 @@ import { Container } from './styles';
 const { ActionType } = Table.Action;
 
 export default function List() {
+    const [filter, setFilter] = useState('');
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -30,6 +32,30 @@ export default function List() {
         loadStudents();
     }, []);
 
+    useEffect(() => {
+        async function filterStudents() {
+            const response = await api.get(`students?filter=${filter}`);
+            setStudents(response.data);
+        }
+
+        filterStudents();
+    }, [filter]);
+
+    async function handleRemove(id) {
+        setLoading(true);
+        try {
+            await api.delete(`/students/${id}`);
+            toast.success('Aluno removido com sucesso');
+        } catch (error) {
+            toast.error('Falha ao remover aluno');
+        }
+
+        const response = await api.get('students');
+
+        setStudents(response.data);
+        setLoading(false);
+    }
+
     return (
         <Container>
             <ContentHeader title="Gerenciando alunos">
@@ -38,7 +64,11 @@ export default function List() {
                     buttonType={Button.TYPES.Register}
                     onClick={() => history.push('/student/form')}
                 />
-                <input placeholder="Buscar aluno" />
+                <input
+                    value={filter}
+                    onChange={e => setFilter(e.target.value)}
+                    placeholder="Buscar aluno"
+                />
             </ContentHeader>
             <ContentWrapper>
                 {loading ? (
@@ -73,7 +103,7 @@ export default function List() {
                                             type={ActionType.delete}
                                             color="#DE3B3B"
                                             onClick={() =>
-                                                alert('not implemented yet!')
+                                                handleRemove(student.id)
                                             }
                                         />
                                     </td>

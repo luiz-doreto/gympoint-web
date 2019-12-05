@@ -10,7 +10,9 @@ import {
     ContentWrapper,
     Button,
     Select,
+    AsyncSelect,
     DatePicker,
+    Spinner,
 } from '~/components';
 import { Container, InputGridContainer, InputContainer } from './styles';
 import { formatPrice, formatDateSimple } from '~/util/format';
@@ -32,23 +34,12 @@ const schema = Yup.object().shape({
 export default function Form() {
     const { register_id } = useParams();
     const [register, setRegister] = useState(null);
-    const [students, setStudents] = useState(null);
     const [plans, setPlans] = useState(null);
     const [endDate, setEndDate] = useState('');
     const [totalValue, setTotalValue] = useState(formatPrice(0));
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        async function loadStudents() {
-            const response = await api.get('students');
-
-            const data = response.data.map(std => ({
-                id: std.id,
-                title: std.name,
-            }));
-
-            setStudents(data);
-        }
-
         async function loadPlans() {
             const response = await api.get('plans');
 
@@ -62,7 +53,6 @@ export default function Form() {
         }
 
         loadPlans();
-        loadStudents();
     }, []);
 
     useEffect(() => {
@@ -73,6 +63,7 @@ export default function Form() {
 
                 setRegister({
                     ...data,
+                    student: formatStudent(data.student),
                     start_date: parseISO(data.start_date),
                     end_date: formatDateSimple(parseISO(data.end_date)),
                     price: formatPrice(data.price),
@@ -80,6 +71,7 @@ export default function Form() {
             } else {
                 setRegister({});
             }
+            setLoading(false);
         }
 
         loadRegister();
@@ -101,6 +93,21 @@ export default function Form() {
             }
         }
     }, [register, plans]); //eslint-disable-line
+
+    function formatStudent(student) {
+        return {
+            ...student,
+            title: student.name,
+        };
+    }
+
+    async function fetchStudents(filter) {
+        const response = await api.get(`/students?filter=${filter}`);
+
+        const data = response.data.map(std => formatStudent(std));
+
+        return data;
+    }
 
     function handleChange(field, value) {
         setRegister({ ...register, [field]: value });
@@ -145,55 +152,68 @@ export default function Form() {
             </ContentHeader>
 
             <ContentWrapper>
-                {register && students && plans && (
-                    <UnForm
-                        id="register"
-                        schema={schema}
-                        initialData={register}
-                        onSubmit={handleSave}
-                    >
-                        <label htmlFor="student">Aluno</label>
-                        <Select
-                            id="student"
-                            name="student_id"
-                            options={students}
-                        />
-                        <InputGridContainer>
-                            <InputContainer>
-                                <label htmlFor="plan">Plano</label>
-                                <Select
-                                    id="plan"
-                                    name="plan_id"
-                                    options={plans}
-                                    onChange={p =>
-                                        handleChange('plan_id', p.id)
-                                    }
-                                />
-                            </InputContainer>
-                            <InputContainer>
-                                <label htmlFor="start_date">
-                                    Data de início
-                                </label>
-                                <DatePicker
-                                    id="start_date"
-                                    name="start_date"
-                                    onChange={date =>
-                                        handleChange('start_date', date)
-                                    }
-                                />
-                            </InputContainer>
-                            <InputContainer>
-                                <label htmlFor="end_date">
-                                    Data de término
-                                </label>
-                                <input id="end_date" value={endDate} disabled />
-                            </InputContainer>
-                            <InputContainer>
-                                <label htmlFor="price">Valor Total</label>
-                                <input id="price" value={totalValue} disabled />
-                            </InputContainer>
-                        </InputGridContainer>
-                    </UnForm>
+                {loading ? (
+                    <Spinner />
+                ) : (
+                    register &&
+                    plans && (
+                        <UnForm
+                            id="register"
+                            schema={schema}
+                            initialData={register}
+                            onSubmit={handleSave}
+                        >
+                            <label htmlFor="student">Aluno</label>
+                            <AsyncSelect
+                                id="student"
+                                name="student"
+                                loadOptions={fetchStudents}
+                            />
+                            <InputGridContainer>
+                                <InputContainer>
+                                    <label htmlFor="plan">Plano</label>
+                                    <Select
+                                        id="plan"
+                                        name="plan_id"
+                                        options={plans}
+                                        onChange={p =>
+                                            handleChange('plan_id', p.id)
+                                        }
+                                    />
+                                </InputContainer>
+                                <InputContainer>
+                                    <label htmlFor="start_date">
+                                        Data de início
+                                    </label>
+                                    <DatePicker
+                                        id="start_date"
+                                        name="start_date"
+                                        onChange={date =>
+                                            handleChange('start_date', date)
+                                        }
+                                    />
+                                </InputContainer>
+                                <InputContainer>
+                                    <label htmlFor="end_date">
+                                        Data de término
+                                    </label>
+                                    <input
+                                        id="end_date"
+                                        value={endDate}
+                                        disabled
+                                    />
+                                </InputContainer>
+                                <InputContainer>
+                                    <label htmlFor="price">Valor Total</label>
+                                    <input
+                                        id="price"
+                                        value={totalValue}
+                                        disabled
+                                    />
+                                </InputContainer>
+                            </InputGridContainer>
+                        </UnForm>
+                    )
                 )}
             </ContentWrapper>
         </Container>

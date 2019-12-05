@@ -4,7 +4,13 @@ import { Form as UnForm, Input } from '@rocketseat/unform';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 
-import { ContentHeader, ContentWrapper, Button } from '~/components';
+import {
+    ContentHeader,
+    ContentWrapper,
+    Button,
+    InputMask,
+    Spinner,
+} from '~/components';
 import { Container, InputContainer } from './styles';
 import api from '~/services/api';
 import history from '~/services/history';
@@ -22,26 +28,24 @@ const schema = Yup.object().shape({
 
 export default function Plan() {
     const { plan_id } = useParams();
-    const [plan, setPlan] = useState({});
+    const [plan, setPlan] = useState(null);
     const [duration, setDuration] = useState(0);
     const [price, setPrice] = useState(0);
-    const [, setTotal] = useState(0);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function loadPlan() {
             if (plan_id) {
                 const response = await api.get(`plans/${plan_id}`);
-                const {
-                    duration: drt,
-                    price: prc,
-                    total_price,
-                } = response.data;
+                const { duration: drt, price: prc } = response.data;
 
                 setDuration(drt);
                 setPrice(prc);
-                setTotal(total_price);
                 setPlan(response.data);
+            } else {
+                setPlan({});
             }
+            setLoading(false);
         }
 
         loadPlan();
@@ -57,7 +61,7 @@ export default function Plan() {
                 await api.put(`plans/${plan_id}`, data);
                 toast.success('Plano atualizado com sucesso!');
             } else {
-                await api.post(`plans/${plan_id}`, data);
+                await api.post(`/plans`, data);
                 toast.success('Plano cadastrado com sucesso!');
             }
 
@@ -88,42 +92,46 @@ export default function Plan() {
                 />
             </ContentHeader>
             <ContentWrapper>
-                <UnForm
-                    id="plan"
-                    schema={schema}
-                    initialData={plan}
-                    onSubmit={handleSave}
-                >
-                    <label htmlFor="title">Título do plano</label>
-                    <Input id="title" name="title" />
-                    <div>
-                        <InputContainer>
-                            <label htmlFor="duration">Duração(Mêses)</label>
-                            <Input
-                                id="duration"
-                                name="duration"
-                                onChange={e => setDuration(e.target.value)}
-                            />
-                        </InputContainer>
-                        <InputContainer>
-                            <label htmlFor="price">Preço mensal</label>
-                            <Input
-                                id="price"
-                                name="price"
-                                onChange={e => setPrice(e.target.value)}
-                            />
-                        </InputContainer>
-                        <InputContainer>
-                            <label htmlFor="total_price">Preço total</label>
-                            <Input
-                                id="total_price"
-                                name="total_price"
-                                value={formattedTotal}
-                                disabled
-                            />
-                        </InputContainer>
-                    </div>
-                </UnForm>
+                {loading ? (
+                    <Spinner />
+                ) : (
+                    <UnForm
+                        id="plan"
+                        schema={schema}
+                        initialData={plan}
+                        onSubmit={handleSave}
+                    >
+                        <label htmlFor="title">Título do plano</label>
+                        <Input id="title" name="title" />
+                        <div>
+                            <InputContainer>
+                                <label htmlFor="duration">Duração(Mêses)</label>
+                                <Input
+                                    id="duration"
+                                    name="duration"
+                                    onChange={e => setDuration(e.target.value)}
+                                />
+                            </InputContainer>
+                            <InputContainer>
+                                <label htmlFor="price">Preço mensal</label>
+                                <InputMask
+                                    id="price"
+                                    name="price"
+                                    prefix="R$ "
+                                    onChange={setPrice}
+                                />
+                            </InputContainer>
+                            <InputContainer>
+                                <label htmlFor="total_price">Preço total</label>
+                                <input
+                                    id="total_price"
+                                    value={formattedTotal}
+                                    disabled
+                                />
+                            </InputContainer>
+                        </div>
+                    </UnForm>
+                )}
             </ContentWrapper>
         </Container>
     );
