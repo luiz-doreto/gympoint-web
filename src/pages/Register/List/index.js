@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MdCheckCircle } from 'react-icons/md';
 import { toast } from 'react-toastify';
+import { PAGE_SIZE } from '~/util/constants';
 
 import {
     ContentWrapper,
@@ -9,6 +10,7 @@ import {
     Table,
     EmptyState,
     Spinner,
+    Footer,
 } from '~/components';
 import api from '~/services/api';
 import history from '~/services/history';
@@ -20,6 +22,8 @@ const { ActionType } = Table.Action;
 export default function List() {
     const [registers, setRegisters] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [count, setCount] = useState(0);
 
     useEffect(() => {
         async function loadRegisters() {
@@ -29,16 +33,32 @@ export default function List() {
         loadRegisters();
     }, []);
 
-    async function fetchRegistrations() {
-        const response = await api.get('registrations');
+    useEffect(() => {
+        async function fetchPage() {
+            await fetchRegistrations({ page });
+        }
 
-        const data = response.data.map(register => ({
+        fetchPage();
+    }, [page]);
+
+    async function fetchRegistrations(params = {}) {
+        setLoading(true);
+
+        const { data } = await api.get('registrations', {
+            params: {
+                ...params,
+                pageSize: PAGE_SIZE,
+            },
+        });
+
+        const dataRegisters = data.rows.map(register => ({
             ...register,
             formattedStart: formatDate(register.start_date),
             formattedEnd: formatDate(register.end_date),
         }));
 
-        setRegisters(data);
+        setRegisters(dataRegisters);
+        setCount(data.count);
         setLoading(false);
     }
 
@@ -67,52 +87,66 @@ export default function List() {
                 {loading ? (
                     <Spinner />
                 ) : registers.length > 0 ? (
-                    <Table>
-                        <thead>
-                            <tr>
-                                <th width="25%">Aluno</th>
-                                <th width="15%">Plano</th>
-                                <th>Inicio</th>
-                                <th>Término</th>
-                                <th>Ativa</th>
-                                <th />
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {registers.map(reg => (
-                                <tr key={reg.id}>
-                                    <td>{reg.student.name}</td>
-                                    <td>{reg.plan ? reg.plan.title : '---'}</td>
-                                    <td>{reg.formattedStart}</td>
-                                    <td>{reg.formattedEnd}</td>
-                                    <td>
-                                        <MdCheckCircle
-                                            size={20}
-                                            color={
-                                                reg.active ? '#42CB59' : '#ddd'
-                                            }
-                                        />
-                                    </td>
-                                    <td>
-                                        <Table.Action
-                                            type={ActionType.edit}
-                                            color="#4D85EE"
-                                            onClick={() =>
-                                                history.push(
-                                                    `/register/form/${reg.id}`
-                                                )
-                                            }
-                                        />
-                                        <Table.Action
-                                            type={ActionType.delete}
-                                            color="#DE3B3B"
-                                            onClick={() => handleRemove(reg.id)}
-                                        />
-                                    </td>
+                    <>
+                        <Table>
+                            <thead>
+                                <tr>
+                                    <th width="25%">Aluno</th>
+                                    <th width="15%">Plano</th>
+                                    <th>Inicio</th>
+                                    <th>Término</th>
+                                    <th>Ativa</th>
+                                    <th />
                                 </tr>
-                            ))}
-                        </tbody>
-                    </Table>
+                            </thead>
+                            <tbody>
+                                {registers.map(reg => (
+                                    <tr key={reg.id}>
+                                        <td>{reg.student.name}</td>
+                                        <td>
+                                            {reg.plan ? reg.plan.title : '---'}
+                                        </td>
+                                        <td>{reg.formattedStart}</td>
+                                        <td>{reg.formattedEnd}</td>
+                                        <td>
+                                            <MdCheckCircle
+                                                size={20}
+                                                color={
+                                                    reg.active
+                                                        ? '#42CB59'
+                                                        : '#ddd'
+                                                }
+                                            />
+                                        </td>
+                                        <td>
+                                            <Table.Action
+                                                type={ActionType.edit}
+                                                color="#4D85EE"
+                                                onClick={() =>
+                                                    history.push(
+                                                        `/register/form/${reg.id}`
+                                                    )
+                                                }
+                                            />
+                                            <Table.Action
+                                                type={ActionType.delete}
+                                                color="#DE3B3B"
+                                                onClick={() =>
+                                                    handleRemove(reg.id)
+                                                }
+                                            />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </Table>
+                        <Footer
+                            onPrev={() => setPage(page - 1)}
+                            onNext={() => setPage(page + 1)}
+                            page={page}
+                            count={count}
+                        />
+                    </>
                 ) : (
                     <EmptyState text="Não existem matrículas cadastradas" />
                 )}

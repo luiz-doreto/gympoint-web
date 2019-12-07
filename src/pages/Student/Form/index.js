@@ -4,7 +4,13 @@ import { Form as UnForm, Input } from '@rocketseat/unform';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 
-import { ContentHeader, ContentWrapper, Button } from '~/components';
+import {
+    ContentHeader,
+    ContentWrapper,
+    Button,
+    InputMask,
+    Spinner,
+} from '~/components';
 import { Container, InputContainer } from './styles';
 import api from '~/services/api';
 import history from '~/services/history';
@@ -14,14 +20,21 @@ const schema = Yup.object().shape({
     email: Yup.string()
         .email('E-mail inválido')
         .required('Campo obrigatório'),
-    age: Yup.number().required('Campo obrigatório'),
-    weight: Yup.number().required('Campo obrigatório'),
-    height: Yup.number().required('Campo obrigatório'),
+    age: Yup.number()
+        .typeError('Campo obrigatório')
+        .required('Campo obrigatório'),
+    weight: Yup.number()
+        .typeError('Campo obrigatório')
+        .required('Campo obrigatório'),
+    height: Yup.number()
+        .typeError('Campo obrigatório')
+        .required('Campo obrigatório'),
 });
 
 export default function Form() {
     const { student_id } = useParams();
-    const [student, setStudent] = useState({});
+    const [student, setStudent] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function loadStudent() {
@@ -29,7 +42,10 @@ export default function Form() {
                 const response = await api.get(`students/${student_id}`);
 
                 setStudent(response.data);
+            } else {
+                setStudent({});
             }
+            setLoading(false);
         }
 
         loadStudent();
@@ -71,31 +87,45 @@ export default function Form() {
                 />
             </ContentHeader>
             <ContentWrapper>
-                <UnForm
-                    id="student"
-                    schema={schema}
-                    initialData={student}
-                    onSubmit={handleSave}
-                >
-                    <label htmlFor="name">Nome</label>
-                    <Input id="name" name="name" />
-                    <label htmlFor="email">Email</label>
-                    <Input id="email" name="email" type="email" />
-                    <div>
-                        <InputContainer>
-                            <label htmlFor="age">Idade</label>
-                            <Input id="age" name="age" />
-                        </InputContainer>
-                        <InputContainer>
-                            <label htmlFor="weight">Peso(kg)</label>
-                            <Input id="weight" name="weight" />
-                        </InputContainer>
-                        <InputContainer>
-                            <label htmlFor="height">altura</label>
-                            <Input id="height" name="height" />
-                        </InputContainer>
-                    </div>
-                </UnForm>
+                {loading ? (
+                    <Spinner />
+                ) : (
+                    <UnForm
+                        id="student"
+                        schema={schema}
+                        initialData={student}
+                        onSubmit={handleSave}
+                    >
+                        <label htmlFor="name">Nome</label>
+                        <Input id="name" name="name" />
+                        <label htmlFor="email">Email</label>
+                        <Input id="email" name="email" type="email" />
+                        <div>
+                            <InputContainer>
+                                <label htmlFor="age">Idade</label>
+                                <Input id="age" name="age" />
+                            </InputContainer>
+                            <InputContainer>
+                                <label htmlFor="weight">Peso</label>
+                                <InputMask
+                                    id="weight"
+                                    name="weight"
+                                    suffix=" kg"
+                                    decimalScale={1}
+                                />
+                            </InputContainer>
+                            <InputContainer>
+                                <label htmlFor="height">altura</label>
+                                <InputMask
+                                    id="height"
+                                    name="height"
+                                    suffix=" cm"
+                                    decimalScale={0}
+                                />
+                            </InputContainer>
+                        </div>
+                    </UnForm>
+                )}
             </ContentWrapper>
         </Container>
     );

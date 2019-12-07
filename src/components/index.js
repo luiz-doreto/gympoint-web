@@ -4,6 +4,7 @@ import ContentWrapper from './ContentWrapper';
 import Header from './Header';
 import Table from './Table';
 import AsyncSelect from './AsyncSelect';
+import Footer from './Footer';
 import Select from './Select';
 import DatePicker from './DatePicker';
 import Dialog from './Dialog';
@@ -24,4 +25,5 @@ export {
     EmptyState,
     Spinner,
     InputMask,
+    Footer,
 };

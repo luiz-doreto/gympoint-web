@@ -43,7 +43,7 @@ export default function Form() {
         async function loadPlans() {
             const response = await api.get('plans');
 
-            const data = response.data.map(p => ({
+            const data = response.data.rows.map(p => ({
                 ...p,
                 id: p.id,
                 title: p.title,
@@ -104,7 +104,7 @@ export default function Form() {
     async function fetchStudents(filter) {
         const response = await api.get(`/students?filter=${filter}`);
 
-        const data = response.data.map(std => formatStudent(std));
+        const data = response.data.rows.map(std => formatStudent(std));
 
         return data;
     }

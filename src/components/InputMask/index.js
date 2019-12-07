@@ -33,7 +33,9 @@ export default function InputMask({
   }, [ref, fieldName]); // eslint-disable-line
 
     function handleChange(valueObject) {
-        onChange(valueObject.floatValue || 0);
+        if (onChange) {
+            onChange(valueObject.floatValue || 0);
+        }
         setValue(valueObject.formattedValue);
     }
 
